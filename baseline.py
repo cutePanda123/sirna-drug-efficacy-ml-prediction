@@ -9,7 +9,8 @@ from tqdm import tqdm
 from collections import Counter
 from rich import print
 from sklearn.metrics import precision_score, recall_score, mean_absolute_error
-
+import csv
+import os
 
 class GenomicTokenizer:
     def __init__(self, ngram=5, stride=2):
@@ -179,14 +180,13 @@ def evaluate_model(model, test_loader, device='cuda'):
     score = calculate_metrics(y_test, y_pred)
     print(f"Test Score: {score:.4f}")
 
-
-
 if __name__ == '__main__':
 
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
     # Load data
     train_data = pd.read_csv('train_data.csv')
+    test_data = pd.read_csv('sample_submission.csv')
 
     columns = ['siRNA_antisense_seq', 'modified_siRNA_antisense_seq_list']
     train_data.dropna(subset=columns + ['mRNA_remaining_pct'], inplace=True)
@@ -210,10 +210,12 @@ if __name__ == '__main__':
     # Create datasets
     train_dataset = SiRNADataset(train_data, columns, vocab, tokenizer, max_len)
     val_dataset = SiRNADataset(val_data, columns, vocab, tokenizer, max_len)
+    test_dataset = SiRNADataset(test_data, columns, vocab, tokenizer, max_len)
 
     # Create data loaders
     train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=32)
+    test_loader = DataLoader(test_dataset, batch_size=32)
 
     # Initialize model
     model = SiRNAModel(len(vocab.itos))
@@ -221,4 +223,32 @@ if __name__ == '__main__':
 
     optimizer = optim.Adam(model.parameters())
 
-    train_model(model, train_loader, val_loader, criterion, optimizer, 50, device)
+    training_epochs = 20
+    train_model(model, train_loader, val_loader, criterion, optimizer, training_epochs, device)
+    print("Finished training.")
+
+    predictions = []
+    for test_inputs, targets in tqdm(test_loader):
+        inputs = [x.to(device) for x in test_inputs]
+        outputs = model(inputs)
+        predictions.extend(outputs.detach().cpu().numpy())
+    print("Finished get the prediction output.")
+
+    input_file = 'sample_submission.csv'
+    output_file = 'processed_submission.csv'
+
+    # Check if the output file exists and remove it if it does
+    if os.path.exists(output_file):
+        os.remove(output_file)
+    with open(input_file, mode='r') as infile, open(output_file, mode='w', newline='') as outfile:
+        reader = csv.DictReader(infile)
+        fieldnames = reader.fieldnames
+        writer = csv.DictWriter(outfile, fieldnames=fieldnames)
+
+        writer.writeheader()
+        for i, row in enumerate(reader):
+            row['mRNA_remaining_pct'] = predictions[i]
+            writer.writerow(row)
+    print("Finished save outputs to result file(processed_submission.csv).")
+
+
