@@ -103,7 +103,7 @@ class SiRNATransformerModel(nn.Module):
         last_hidden_state = outputs[0]
         pooled_output = last_hidden_state[:, 0, :]  # Use the [CLS] token representation
         dropout_output = self.dropout(pooled_output)
-        return self.linear(dropout_output)
+        return self.linear(dropout_output).squeeze(-1)
 
 def calculate_metrics(y_true, y_pred, threshold=30):
     mae = np.mean(np.abs(y_true - y_pred))
@@ -116,7 +116,10 @@ def calculate_metrics(y_true, y_pred, threshold=30):
 
     precision = precision_score(y_true_binary, y_pred_binary, average='binary')
     recall = recall_score(y_true_binary, y_pred_binary, average='binary')
-    f1 = 2 * precision * recall / (precision + recall)
+    if precision + recall == 0:
+        f1 = 0
+    else:
+        f1 = 2 * precision * recall / (precision + recall)
     score = (1 - mae / 100) * 0.5 + (1 - range_mae / 100) * f1 * 0.5
     return score
 
@@ -154,7 +157,7 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, num_epoch
                 attention_mask = batch['attention_mask'].to(device)
                 targets = batch['labels'].to(device)
 
-                outputs = model(input_ids=inputs['input_ids'], attention_mask=inputs['attention_mask'])
+                outputs = model(input_ids=input_ids, attention_mask=attention_mask)
                 loss = criterion(outputs, targets)
                 val_loss += loss.item()
                 val_preds.extend(outputs.cpu().numpy())
@@ -221,7 +224,7 @@ if __name__ == '__main__':
     model = SiRNATransformerModel(pretrained_model_name='bert-base-uncased')
     criterion = nn.MSELoss()
 
-    model_optimizer = optim.Adam(model.parameters(), lr=0.001)
+    model_optimizer = optim.Adam(model.parameters(), lr=2e-5)
 
     training_epochs = 50
     train_model(model, train_loader, val_loader, criterion, model_optimizer, training_epochs, device)
