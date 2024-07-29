@@ -226,14 +226,17 @@ if __name__ == '__main__':
 
     model_optimizer = optim.Adam(model.parameters(), lr=2e-5)
 
-    training_epochs = 50
+    training_epochs = 20
     train_model(model, train_loader, val_loader, criterion, model_optimizer, training_epochs, device)
     print("Finished training.")
 
     predictions = []
-    for test_inputs, targets in tqdm(test_loader):
-        inputs = [x.to(device) for x in test_inputs]
-        outputs = model(inputs)
+    for batch in test_loader:
+        # Extract input_ids, attention_mask, and targets from the batch
+        input_ids = batch['input_ids'].to(device)
+        attention_mask = batch['attention_mask'].to(device)
+
+        outputs = model(input_ids=input_ids, attention_mask=attention_mask)
         predictions.extend(outputs.detach().cpu().numpy())
     print("Finished get the prediction output.")
 
