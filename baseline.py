@@ -103,7 +103,10 @@ def calculate_metrics(y_true, y_pred, threshold=30):
 
     precision = precision_score(y_true_binary, y_pred_binary, average='binary')
     recall = recall_score(y_true_binary, y_pred_binary, average='binary')
-    f1 = 2 * precision * recall / (precision + recall)
+    if precision + recall == 0:
+        f1 = 0
+    else:
+        f1 = 2 * precision * recall / (precision + recall)
     score = (1 - mae / 100) * 0.5 + (1 - range_mae / 100) * f1 * 0.5
     return score
 
