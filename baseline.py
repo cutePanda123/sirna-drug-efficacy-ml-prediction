@@ -101,9 +101,12 @@ def calculate_metrics(y_true, y_pred, threshold=30):
     mask = (y_pred >= 0) & (y_pred <= threshold)
     range_mae = mean_absolute_error(y_true[mask], y_pred[mask]) if mask.sum() > 0 else 100
 
-    precision = precision_score(y_true_binary, y_pred_binary, average='binary')
-    recall = recall_score(y_true_binary, y_pred_binary, average='binary')
-    f1 = 2 * precision * recall / (precision + recall)
+    precision = precision_score(y_true_binary, y_pred_binary, average='binary', zero_division=0)
+    recall = recall_score(y_true_binary, y_pred_binary, average='binary', zero_division=0)
+    if precision + recall == 0:
+        f1 = 0
+    else:
+        f1 = 2 * precision * recall / (precision + recall)
     score = (1 - mae / 100) * 0.5 + (1 - range_mae / 100) * f1 * 0.5
     return score
 
