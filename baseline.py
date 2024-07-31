@@ -41,12 +41,13 @@ class GenomicVocab:
 
 
 class SiRNADataset(Dataset):
-    def __init__(self, df, columns, vocab, tokenizer, max_len):
+    def __init__(self, df, columns, vocab, tokenizer, max_len, gene_target_encoder):
         self.df = df
         self.columns = columns
         self.vocab = vocab
         self.tokenizer = tokenizer
         self.max_len = max_len
+        self.gene_target_encoder = gene_target_encoder
 
     def __len__(self):
         return len(self.df)
@@ -55,9 +56,16 @@ class SiRNADataset(Dataset):
         row = self.df.iloc[idx]
         
         seqs = [self.tokenize_and_encode(row[col]) for col in self.columns]
+        
+        gene_target_name = row['gene_target_symbol_name']
+        if gene_target_name in self.gene_target_encoder:
+            gene_target = torch.tensor(self.gene_target_encoder[gene_target_name], dtype=torch.float)
+        else:
+            gene_target = torch.zeros(len(self.gene_target_encoder[next(iter(self.gene_target_encoder))]), dtype=torch.float)
+
         target = torch.tensor(row['mRNA_remaining_pct'], dtype=torch.float)
 
-        return seqs, target
+        return (seqs, gene_target), target
 
     def tokenize_and_encode(self, seq):
         if ' ' in seq:  # Modified sequence
@@ -69,27 +77,36 @@ class SiRNADataset(Dataset):
         padded = encoded + [0] * (self.max_len - len(encoded))
         return torch.tensor(padded[:self.max_len], dtype=torch.long)
 
+    def encode_gene_target(self, gene_target):
+        # Assuming gene_target_encoder is a dictionary mapping gene target names to one-hot encoded vectors
+        return torch.tensor(self.gene_target_encoder.encode(gene_target), dtype=torch.float)
 
 class SiRNAModel(nn.Module):
-    def __init__(self, vocab_size, embed_dim=200, hidden_dim=256, n_layers=3, dropout=0.5):
+    def __init__(self, vocab_size, gene_target_vocab_size, embed_dim=200, gene_target_embed_dim=100, hidden_dim=256, n_layers=3, dropout=0.5):
         super(SiRNAModel, self).__init__()
         
         self.embedding = nn.Embedding(vocab_size, embed_dim, padding_idx=0)
+        self.gene_target_embedding = nn.Embedding(gene_target_vocab_size, gene_target_embed_dim, padding_idx=0)
         self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, bidirectional=True, batch_first=True, dropout=dropout)
-        self.fc = nn.Linear(hidden_dim * 4, 1)
-        self.dropout = nn.Dropout(dropout)
-    
-    def forward(self, x):
-        embedded = [self.embedding(seq) for seq in x]
-        outputs = []
-        for embed in embedded:
-            x, _ = self.gru(embed)
-            x = self.dropout(x[:, -1, :])  # Use last hidden state
-            outputs.append(x)
         
-        x = torch.cat(outputs, dim=1)
-        x = self.fc(x)
-        return x.squeeze()
+        self.fc = nn.Linear(hidden_dim * 2 * len(columns) + gene_target_embed_dim, 1)
+        self.dropout = nn.Dropout(dropout)
+
+    def forward(self, seqs, gene_target):
+        embedded_seqs = [self.embedding(seq) for seq in seqs]
+        embedded_gene_target = self.gene_target_embedding(gene_target.long())
+
+        seq_outputs = []
+        for embed in embedded_seqs:
+            gru_output, _ = self.gru(embed)
+            gru_output = self.dropout(gru_output[:, -1, :])  # Use last hidden state
+            seq_outputs.append(gru_output)
+        
+        concatenated_seqs = torch.cat(seq_outputs, dim=1)
+        combined = torch.cat([concatenated_seqs, embedded_gene_target], dim=1)
+        
+        output = self.fc(combined)
+        return output.squeeze()
 
 
 def calculate_metrics(y_true, y_pred, threshold=30):
@@ -119,12 +136,13 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, num_epoch
     for epoch in range(num_epochs):
         model.train()
         train_loss = 0
-        for inputs, targets in tqdm(train_loader, desc=f'Epoch {epoch+1}/{num_epochs}'):
+        for (inputs, gene_target_inputs), targets in tqdm(train_loader, desc=f'Epoch {epoch+1}/{num_epochs}'):
             inputs = [x.to(device) for x in inputs]
+            gene_target_inputs = gene_target_inputs.to(device)
             targets = targets.to(device)
             
             optimizer.zero_grad()
-            outputs = model(inputs)
+            outputs = model(inputs, gene_target_inputs)
             loss = criterion(outputs, targets)
             loss.backward()
             optimizer.step()
@@ -137,10 +155,11 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, num_epoch
         val_targets = []
 
         with torch.no_grad():
-            for inputs, targets in val_loader:
+            for (inputs, gene_target_inputs), targets in val_loader:
                 inputs = [x.to(device) for x in inputs]
+                gene_target_inputs = gene_target_inputs.to(device)
                 targets = targets.to(device)
-                outputs = model(inputs)
+                outputs = model(inputs, gene_target_inputs)
                 loss = criterion(outputs, targets)
                 val_loss += loss.item()
                 val_preds.extend(outputs.cpu().numpy())
@@ -210,10 +229,16 @@ if __name__ == '__main__':
     # Find max sequence length
     max_len = max(max(len(seq.split()) if ' ' in seq else len(tokenizer.tokenize(seq)) 
                       for seq in train_data[col]) for col in columns)
+    
+    # Get unique gene target names
+    unique_gene_targets = train_data['gene_target_symbol_name'].unique()
+    # Create one-hot encoding for each unique gene target
+    gene_target_encoder = {gene: np.eye(len(unique_gene_targets))[i] for i, gene in enumerate(unique_gene_targets)}
+
     # Create datasets
-    train_dataset = SiRNADataset(train_data, columns, vocab, tokenizer, max_len)
-    val_dataset = SiRNADataset(val_data, columns, vocab, tokenizer, max_len)
-    test_dataset = SiRNADataset(test_data, columns, vocab, tokenizer, max_len)
+    train_dataset = SiRNADataset(train_data, columns, vocab, tokenizer, max_len, gene_target_encoder)
+    val_dataset = SiRNADataset(val_data, columns, vocab, tokenizer, max_len, gene_target_encoder)
+    test_dataset = SiRNADataset(test_data, columns, vocab, tokenizer, max_len, gene_target_encoder)
 
     # Create data loaders
     train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
@@ -221,7 +246,7 @@ if __name__ == '__main__':
     test_loader = DataLoader(test_dataset, batch_size=32)
 
     # Initialize model
-    model = SiRNAModel(len(vocab.itos))
+    model = SiRNAModel(len(vocab.itos), len(unique_gene_targets))
     criterion = nn.MSELoss()
 
     optimizer = optim.Adam(model.parameters())
