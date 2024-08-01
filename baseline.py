@@ -253,5 +253,3 @@ if __name__ == '__main__':
             row['mRNA_remaining_pct'] = predictions[i]
             writer.writerow(row)
     print("Finished save outputs to result file(processed_submission.csv).")
-
-
