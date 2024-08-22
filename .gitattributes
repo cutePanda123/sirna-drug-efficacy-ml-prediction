@@ -1,0 +1,2 @@
+submission/data/external_data/rinalmo_features..csv filter=lfs diff=lfs merge=lfs -text
+*.csv filter=lfs diff=lfs merge=lfs -text
