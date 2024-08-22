@@ -2,11 +2,31 @@
 
 This repository contains the code, datasets, and resources necessary to train a machine learning model for predicting the efficacy of siRNA-based drugs. The project focuses on developing and optimizing models, covering aspects such as data preparation, feature engineering, hyperparameter tuning, and more.
 
+## Dependencies
+
+- **Operating System**: macOS 14.6.1
+- **Python**: 3.11.7
+- **Packages**:
+  - torch: 2.0.0
+  - pandas: 2.1.3
+  - lightgbm: 4.5.0
+  - numpy: 1.24.3
+  - scikit-learn: 1.5.1
+  - tqdm: 4.66.1
+  - rich: 13.7.0
+  - multimolecule: 0.0.4
+  - chardet: 5.2.0
+  - datetime: 5.5
+
+
 ## How to Run
 
 - Open and run the `code/main.ipynb` file in Jupyter Notebook
 
 ## Project Structure
+
+- **`data/external_data/best_hyper_parameters.json`**
+  - **Purpose**: Saves the best hyperparameters identified through the hyperparameter search.
 
 - **`code/main.ipynb`**
   - **Purpose**: Runs the entire process, including data loading, feature engineering, training, and predicting.
@@ -19,6 +39,7 @@ This repository contains the code, datasets, and resources necessary to train a 
     - `data/sample_submission.csv`
     - `data/external_data/gru_features_predict_only.csv`
     - `data/external_data/pretrained_feature_predict.csv`
+    - `data/external_data/best_hyper_parameters.json`
   - **Output**: Final submission file.
 
 - **`code/dependency_setup.ipynb`**
@@ -56,6 +77,7 @@ This repository contains the code, datasets, and resources necessary to train a 
     - `data/sample_submission.csv`
     - `data/external_data/gru_features_predict_only.csv`
     - `data/external_data/pretrained_feature_predict.csv`
+    - `data/external_data/best_hyper_parameters.json`
   - **Output**: Final submission file.
 
 - **`code/getting_gru_feature.ipynb`**
@@ -85,24 +107,3 @@ This repository contains the code, datasets, and resources necessary to train a 
   - **Output**:
     - `rinalmo_features.csv`
     - `mrnafm_features.csv`
-
-## Dependencies
-
-- **Operating System**: macOS 14.6.1
-- **Python**: 3.11.7
-- **Packages**:
-  - torch: 2.0.0
-  - pandas: 2.1.3
-  - lightgbm: 4.5.0
-  - numpy: 1.24.3
-  - scikit-learn: 1.5.1
-  - tqdm: 4.66.1
-  - rich: 13.7.0
-  - multimolecule: 0.0.4
-  - chardet: 5.2.0
-  - datetime: 5.5
-
-## Data
-
-- **Files in `external_data`**:
-  - `best_hyper_parameters.json`: This file contains the best hyperparameters found during the hyperparameter search.
