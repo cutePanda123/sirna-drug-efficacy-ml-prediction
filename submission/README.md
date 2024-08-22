@@ -29,7 +29,7 @@ This repository contains the code, datasets, and resources necessary to train a 
   - **Purpose**: Saves the best hyperparameters identified through the hyperparameter search.
 
 - **`data/external_data/gru_weights`**
-  - **Purpose**: Saved weights of the GRU model, which is used to generate features for downstream modeling.
+  - **Purpose**: Saves weights of the GRU model, which is used to generate features for downstream modeling.
 
 - **`data/external_data/gru_features_predict_only.csv`**
   - **Purpose**: Predictions from the GRU model, which is used as a feature for downstream modeling.
