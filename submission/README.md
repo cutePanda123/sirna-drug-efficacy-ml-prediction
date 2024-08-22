@@ -111,8 +111,6 @@ This repository contains the code, datasets, and resources necessary to train a 
     - `data/sample_submission.csv`
   - **Output**:
     - `pretrained_feature_predict.csv`
-    - `rinalmo_features.csv`
-    - `mrnafm_features.csv`
 
 - **`code/pretrained_model_features.ipynb`**
   - **Purpose**: Uses two pretrained models to generate features.
