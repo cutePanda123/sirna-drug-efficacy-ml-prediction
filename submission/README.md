@@ -1,20 +1,61 @@
 
-# Predictive Modeling Project
+# siRNA Drug Efficacy Prediction
 
-This repository contains a series of notebooks used for feature extraction and model training for a predictive modeling task. The project utilizes several methods, including GRU-based features and pretrained models, to generate predictions and submit results.
+This repository includes the code, datasets, and resources needed to train a machine learning model for predicting the efficacy of siRNA-based drugs. The project emphasizes developing and optimizing models, covering aspects such as data preparation, feature engineering, hyperparameter tuning, and more.
 
 ## Project Structure
 
-- **current_best.ipynb**: 
-  - Purpose: Generates the final submission results.
+- **code/main.ipynb**: 
+  - Purpose: Runs the whole process including data loading, feature engineering, training, and predictiong.
   - Requirements: 
+    - `code/dependency_setup.ipynb`
+    - `code/load_data.ipynb`
+    - `code/build_features.ipynb`
+    - `code/train_and_predict.ipynb`
     - `data/train_data.csv`
     - `data/sample_submission.csv`
     - `data/external_data/gru_features_predict_only.csv`
     - `data/external_data/pretrained_feature_predict.csv`
   - Output: Final submission file.
 
-- **getting_gru_feature.ipynb**: 
+- **code/dependency_setup.ipynb**: 
+  - Purpose: Installs all the dependency packages.
+
+- **code/load_data.ipynb**: 
+  - Purpose: Loads training and evalution data.
+  - Requirements: 
+    - `code/dependency_setup.ipynb`
+
+- **code/build_features.ipynb**: 
+  - Purpose: Feature engineering including feature extraction and selection.
+  - Requirements: 
+    - `code/dependency_setup.ipynb`
+    - `code/load_data.ipynb`
+
+- **code/hyper_parameter_selection.ipynb**: 
+  - Purpose: Searches for best hyper parameters for the model.
+  - Requirements: 
+    - `code/dependency_setup.ipynb`
+    - `code/load_data.ipynb`
+    - `code/build_features.ipynb`
+    - `data/train_data.csv`
+    - `data/sample_submission.csv`
+    - `data/external_data/gru_features_predict_only.csv`
+    - `data/external_data/pretrained_feature_predict.csv`
+
+- **code/train_and_predict.ipynb**: 
+  - Purpose: Generates the final submission results.
+  - Requirements: 
+    - `code/dependency_setup.ipynb`
+    - `code/load_data.ipynb`
+    - `code/build_features.ipynb`
+    - `data/train_data.csv`
+    - `data/sample_submission.csv`
+    - `data/external_data/gru_features_predict_only.csv`
+    - `data/external_data/pretrained_feature_predict.csv`
+  - Output: Final submission file.
+
+- **code/getting_gru_feature.ipynb**: 
   - Purpose: Generates the `gru_features_predict_only.csv` file.
   - Requirements:
     - `data/train_data.csv`
@@ -23,7 +64,7 @@ This repository contains a series of notebooks used for feature extraction and m
   - Output: `gru_features_predict_only.csv`
   - Notes: This notebook also contains code to generate the `gru_weights`.
 
-- **pretrained_feature_predict.ipynb**: 
+- **code/pretrained_feature_predict.ipynb**: 
   - Purpose: Generates the `pretrained_feature_predict.csv` data file.
   - Requirements:
     - `data/train_data.csv`
@@ -33,7 +74,7 @@ This repository contains a series of notebooks used for feature extraction and m
     - `rinalmo_features.csv`
     - `mrnafm_features.csv`
 
-- **pretrained_model_features.ipynb**: 
+- **code/pretrained_model_features.ipynb**: 
   - Purpose: Uses two pretrained models to generate features.
   - Requirements:
     - `data/train_data.csv`
@@ -42,56 +83,22 @@ This repository contains a series of notebooks used for feature extraction and m
     - `rinalmo_features.csv`
     - `mrnafm_features.csv`
 
-## Setup Instructions
-
-1. Clone the repository:
-    ```bash
-    git clone https://github.com/yourusername/your-repo-name.git
-    ```
-
-2. Install the necessary dependencies:
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-3. Place the required data files in the `data` folder.
-
-4. Run the notebooks in the following order:
-    1. `pretrained_model_features.ipynb`
-    2. `pretrained_feature_predict.ipynb`
-    3. `getting_gru_feature.ipynb`
-    4. `current_best.ipynb`
-
-5. After running the notebooks, your final submission file will be ready.
-
-## Contributing
-
-Feel free to open issues or submit pull requests for any bugs or improvements.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-
-
-
-
-
-
-
-
-
-
-### How to run
-
+### Dependency
+Operation System version: macOS 14.6.1
+Python version: 3.11.7
+Package versions:
 torch: 2.0.0
-python: 3.11.7
-OS: macos 14.6.1
+pandas: 2.1.3
+lightgbm: 4.5.0
+numpy: 1.24.3
+scikit-learn: 1.5.1
+tqdm: 4.66.1
+rich: 13.7.0
+multimolecule: 0.0.4
+chardet: 5.2.0
+datetime: 5.5
 
-- **current_best.ipynb**: This notebook is used to generate the final submission results. To run it, you need the following files in the `data` folder: `train_data.csv`, `sample_submission.csv`, `gru_features_predict_only.csv`, and `pretrained_feature_predict.csv`.
 
-- **getting_gru_feature.ipynb**: This notebook generates the `gru_features_predict_only.csv` file. It requires `train_data.csv`, `sample_submission.csv`, and `gru_weights` to be present in the `data` folder. The notebook also includes the code for generating the `gru_weights`.
-
-- **pretrained_feature_predict.ipynb**: This notebook is used to generate the `pretrained_feature_predict.csv` data file. It requires `train_data.csv` and `sample_submission.csv` in the `data` folder. After running, it will generate two additional files: `rinalmo_features.csv` and `mrnafm_features.csv`.
-
-- **pretrained_model_features.ipynb**: This notebook utilizes two pretrained models to generate features. After running, it will produce two data files: `rinalmo_features.csv` and `mrnafm_features.csv`.
+### Data:
+- Files in the external_data
+best_hyper_parameters.json: this file saves the best hyper parameters found by hyper parameter search. 
