@@ -28,6 +28,21 @@ This repository contains the code, datasets, and resources necessary to train a 
 - **`data/external_data/best_hyper_parameters.json`**
   - **Purpose**: Saves the best hyperparameters identified through the hyperparameter search.
 
+- **`data/external_data/gru_weights`**
+  - **Purpose**: Saved weights of the GRU model, which is used to generate features for downstream modeling.
+
+- **`data/external_data/gru_features_predict_only.csv`**
+  - **Purpose**: Predictions from the GRU model, which is used as a feature for downstream modeling.
+
+- **`data/external_data/mrnafm_features.csv`**
+  - **Purpose**: Embeddings generated from the pretrained mRNAFM model (https://huggingface.co/multimolecule/rnafm).
+
+- **`data/external_data/rinalmo_features.csv`**
+  - **Purpose**: Embeddings generated from the pretrained RiNALMo model (https://huggingface.co/multimolecule/rinalmo).
+
+- **`data/external_data/pretrained_feature_predict.csv`**
+  - **Purpose**: Predictions using the embeddings from mRNAFM and RiNALMo, which is then used as a feature for downstream modeling.
+
 - **`code/main.ipynb`**
   - **Purpose**: Runs the entire process, including data loading, feature engineering, training, and predicting.
   - **Requirements**: 
