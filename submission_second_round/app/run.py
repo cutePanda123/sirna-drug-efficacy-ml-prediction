@@ -77,13 +77,11 @@ df = pd.concat([df_submit], axis=0).reset_index(drop=True)
 
 print(df.tail(3))
 
-# Prepare testing data 
+# TODO: build these features in runtime based on input testing data
 df = pd.read_csv(f"{base_path}app/features/gru_features_predict_only.csv", index_col=0).tail(df.shape[0]).merge(
     df,
     on='id'
 )
-
-# Features from other pretrained model
 df = pd.read_csv(f"{base_path}app/features/pretrained_feature_predict.csv", index_col=0).tail(df.shape[0]).merge(
     df,
     on='id'
