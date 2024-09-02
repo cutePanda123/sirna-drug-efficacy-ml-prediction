@@ -4,10 +4,6 @@ import glob
 import os
 import sys
 
-################################################
-# 特征工程
-################################################
-
 def siRNA_feat_builder(s: pd.Series, anti: bool = False):
     name = "anti" if anti else "sense"
     df = s.to_frame()
