@@ -1,0 +1,30 @@
+publication_id_category = ['WO0b0a8fec3d', 'WO0beeb1f407', 'WO181a7d3a16', 'WO182f2c5b3a',
+       'WO1b379c9eef', 'WO2185a478f7', 'WO2527cd3fe5', 'WO28aca1a182',
+       'WO28b5990c45', 'WO2b901a9fb5', 'WO2dadb0c0c7', 'WO340319f8ba',
+       'WO3be1cf34e8', 'WO40428852d0', 'WO5355a219aa', 'WO5688ad54a1',
+       'WO6c4db1f08f', 'WO6db0c26e50', 'WO6fe860fef8', 'WO854c10004b',
+       'WO85e99b3492', 'WO9abafc223f', 'WO9cdd416594', 'WO9efb397e42',
+       'WOa4ea4f50c8', 'WOa519cea1c5', 'WOa611314a90', 'WOad8ff5d89a',
+       'WOaf860700aa', 'WOb027e2c5f0', 'WOc20c87f522', 'WOd9a3dd8c47',
+       'WOda137ca368', 'WOdbb8b7dbd0', 'WOdc4f13c160', 'WOdc6f16a65e',
+       'WOee0afbdeee', 'WOf5583f6d6e', 'WOf5fa77d982', 'WOff4c21cc8c']
+
+gene_target_ncbi_id_category = ['NM_000064.3', 'NM_000130.4', 'NM_000311.5', 'NM_000371.4',
+       'NM_000454.4', 'NM_000484.4', 'NM_000504.4', 'NM_000505.4',
+       'NM_000681.4', 'NM_000859.3', 'NM_001031667.1', 'NM_001037582.3',
+       'NM_001039554.3', 'NM_001110556.2', 'NM_001285406.1', 'NM_001290273.1',
+       'NM_001301015.3', 'NM_001365536.1', 'NM_001393338.1', 'NM_001710.5',
+       'NM_001710.6', 'NM_001737.5', 'NM_001904.4', 'NM_002458.3',
+       'NM_002973.3', 'NM_002973.4', 'NM_002977.3', 'NM_003041.4',
+       'NM_005566.3', 'NM_005656.4', 'NM_005910.6', 'NM_008198.2',
+       'NM_009125.2', 'NM_010403.2', 'NM_010699.2', 'NM_011434.1',
+       'NM_014495.2', 'NM_014495.3', 'NM_016841.4', 'NM_017545.2',
+       'NM_019884.3', 'NM_021146.4', 'NM_021232.2', 'NM_021804.3',
+       'NM_028801.2', 'NM_144997.7', 'NM_146018.2', 'NM_153609.4',
+       'XM_005272484.3', 'XM_005593037.2', 'XM_006527911.5', 'XM_017004061.1']
+
+cell_line_donor_category = ['A549 Cells', 'BE(2)-C Cells', 'COS-7 Cells', 'DU145 Cells',
+       'HeLa Cells', 'Hep3B Cells', 'HepG2 Cells', 'Hepa1-6 Cells',
+       'Human Trabecular Meshwork Cells', 'Neuro2a Cells', 'Panc-1 cells',
+       'Primary Human Hepatocytes', 'Primary Monkey Hepatocytes',
+       'Primary Mouse Hepatocytes']
