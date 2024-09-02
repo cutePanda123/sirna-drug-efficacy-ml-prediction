@@ -63,10 +63,13 @@ def siRNA_feat_builder(s: pd.Series, anti: bool = False):
 
     return df.iloc[:, 1:]
 
-loaded_model = lgb.Booster(model_file='/model/lightgbm_model.txt')
+is_docker_env = False
+base_path = "/" if is_docker_env else "./"
+
+loaded_model = lgb.Booster(model_file=f"{base_path}model/lightgbm_model.txt")
 
 # Load testing data
-csv_files = glob.glob("/tcdata/*.csv")
+csv_files = glob.glob(f"{base_path}tcdata/*.csv")
 if len(csv_files) == 0:
     print("No CSV file found in the folder.")
     sys.exit()
@@ -78,13 +81,13 @@ df = pd.concat([df_submit], axis=0).reset_index(drop=True)
 print(df.tail(3))
 
 # Prepare testing data 
-df = pd.read_csv("/app/features/gru_features_predict_only.csv", index_col=0).tail(4876).merge(
+df = pd.read_csv(f"{base_path}app/features/gru_features_predict_only.csv", index_col=0).tail(4876).merge(
     df,
     on='id'
 )
 
 # Features from other pretrained model
-df = pd.read_csv("/app/features/pretrained_feature_predict.csv", index_col=0).tail(4876).merge(
+df = pd.read_csv(f"{base_path}app/features/pretrained_feature_predict.csv", index_col=0).tail(4876).merge(
     df,
     on='id'
 )
@@ -163,11 +166,11 @@ y_pred[y_pred < 0] = 0
 
 df_submit["mRNA_remaining_pct"] = y_pred
 
-filename = "/app/submit.csv"
+filename = f"{base_path}app/submit.csv"
 print(f"File saved as {filename}")
 df_submit.to_csv(filename, index=False)
 
 
 # TODO: clean the testing change
-tmp = pd.read_csv("/app/submit.csv")
+tmp = pd.read_csv(f"{base_path}app/submit.csv")
 print(tmp.head(3))
