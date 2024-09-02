@@ -5,7 +5,6 @@ import os
 import sys
 from utils import siRNA_feat_builder
 
-
 is_docker_env = False
 base_path = "/" if is_docker_env else "./"
 
