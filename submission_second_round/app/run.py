@@ -6,7 +6,7 @@ import sys
 from utils import siRNA_feat_builder
 
 is_docker_env = False
-base_path = "/" if is_docker_env else "./"
+base_path = "/" if is_docker_env else "../"
 
 loaded_model = lgb.Booster(model_file=f"{base_path}model/lightgbm_model.txt")
 
@@ -34,28 +34,35 @@ df = pd.read_csv(f"{base_path}app/features/pretrained_feature_predict.csv", inde
 
 print(df.tail(3))
 
-df_publication_id = pd.get_dummies(df.publication_id)
+from feature_category import publication_id_category, gene_target_ncbi_id_category, cell_line_donor_category
+
+df_publication_id = pd.get_dummies(df.publication_id.astype(pd.CategoricalDtype(categories=publication_id_category)))
 df_publication_id.columns = [
     f"feat_publication_id_{c}" for c in df_publication_id.columns
 ]
+
 df_gene_target_symbol_name = pd.get_dummies(df.gene_target_symbol_name)
 df_gene_target_symbol_name.columns = [
     f"feat_gene_target_symbol_name_{c}" for c in df_gene_target_symbol_name.columns
 ]
-df_gene_target_ncbi_id = pd.get_dummies(df.gene_target_ncbi_id)
+
+df_gene_target_ncbi_id = pd.get_dummies(df.gene_target_ncbi_id.astype(pd.CategoricalDtype(categories=gene_target_ncbi_id_category)))
 df_gene_target_ncbi_id.columns = [
     f"feat_gene_target_ncbi_id_{c}" for c in df_gene_target_ncbi_id.columns
 ]
+
 df_gene_target_species = pd.get_dummies(df.gene_target_species)
 df_gene_target_species.columns = [
     f"feat_gene_target_species_{c}" for c in df_gene_target_species.columns
 ]
+
 siRNA_duplex_id_values = df.siRNA_duplex_id.str.split("-|\.").str[1].astype("int")
 siRNA_duplex_id_values = (siRNA_duplex_id_values - siRNA_duplex_id_values.min()) / (
     siRNA_duplex_id_values.max() - siRNA_duplex_id_values.min()
 )
 df_siRNA_duplex_id = pd.DataFrame(siRNA_duplex_id_values)
-df_cell_line_donor = pd.get_dummies(df.cell_line_donor)
+
+df_cell_line_donor = pd.get_dummies(df.cell_line_donor.astype(pd.CategoricalDtype(categories=cell_line_donor_category)))
 df_cell_line_donor.columns = [
     f"feat_cell_line_donor_{c}" for c in df_cell_line_donor.columns
 ]
@@ -65,6 +72,7 @@ df_cell_line_donor["feat_cell_line_donor_hepatocytes"] = (
 df_cell_line_donor["feat_cell_line_donor_cells"] = (
     df.cell_line_donor.str.contains("Cells").fillna(False).astype("int")
 )
+
 df_siRNA_concentration = df.siRNA_concentration.to_frame()
 df_Transfection_method = pd.get_dummies(df.Transfection_method)
 df_Transfection_method.columns = [
