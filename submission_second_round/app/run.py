@@ -3,12 +3,13 @@ import pandas as pd
 import glob
 import os
 import sys
-from utils import siRNA_feat_builder
+from utils import siRNA_feat_builder, get_latest_model_file_name
 
 is_docker_env = False
 base_path = "/" if is_docker_env else "../"
 
-loaded_model = lgb.Booster(model_file=f"{base_path}model/lightgbm_model.txt")
+model_file_path = get_latest_model_file_name(f"{base_path}model/")
+loaded_model = lgb.Booster(model_file=model_file_path)
 
 # Load testing data
 csv_files = glob.glob(f"{base_path}tcdata/*.csv")
@@ -20,26 +21,17 @@ csv_file = csv_files[0]
 df_submit = pd.read_csv(csv_file)
 df = pd.concat([df_submit], axis=0).reset_index(drop=True)
 
-print(df.tail(3))
-
 # TODO: build these features in runtime based on input testing data
-df = pd.read_csv(f"{base_path}app/features/gru_features_predict_only.csv", index_col=0).tail(df.shape[0]).merge(
-    df,
-    on='id'
-)
-df = pd.read_csv(f"{base_path}app/features/pretrained_feature_predict.csv", index_col=0).tail(df.shape[0]).merge(
-    df,
-    on='id'
-)
+# df = pd.read_csv(f"{base_path}app/features/gru_features_predict_only.csv", index_col=0).tail(df.shape[0]).merge(
+#     df,
+#     on='id'
+# )
+# df = pd.read_csv(f"{base_path}app/features/pretrained_feature_predict.csv", index_col=0).tail(df.shape[0]).merge(
+#     df,
+#     on='id'
+# )
 
-print(df.tail(3))
-
-from feature_category import publication_id_category, gene_target_symbol_name_category, gene_target_ncbi_id_category, gene_target_species_category, Transfection_method_category, Duration_after_transfection_h_category, cell_line_donor_category
-
-df_publication_id = pd.get_dummies(df.publication_id.astype(pd.CategoricalDtype(categories=publication_id_category)))
-df_publication_id.columns = [
-    f"feat_publication_id_{c}" for c in df_publication_id.columns
-]
+from feature_category import gene_target_symbol_name_category, gene_target_ncbi_id_category, gene_target_species_category, Transfection_method_category, Duration_after_transfection_h_category, cell_line_donor_category
 
 df_gene_target_symbol_name = pd.get_dummies(df.gene_target_symbol_name.astype(pd.CategoricalDtype(categories=gene_target_symbol_name_category)))
 df_gene_target_symbol_name.columns = [
@@ -56,7 +48,7 @@ df_gene_target_species.columns = [
     f"feat_gene_target_species_{c}" for c in df_gene_target_species.columns
 ]
 
-siRNA_duplex_id_values = df.siRNA_duplex_id.str.split("-|\.").str[1].astype("int")
+siRNA_duplex_id_values = df.siRNA_duplex_id.str.split("-|\.").str[1].fillna(0).astype("int")
 siRNA_duplex_id_values = (siRNA_duplex_id_values - siRNA_duplex_id_values.min()) / (
     #siRNA_duplex_id_values.max() - siRNA_duplex_id_values.min()
     1810839 - 62934
@@ -85,12 +77,11 @@ df_Duration_after_transfection_h.columns = [
     for c in df_Duration_after_transfection_h.columns
 ]
 
-df_GRU_pred = df[['GRU_predict']]
-df_pretrained_pred = df[['Pretrained_feature_predict']]
+#df_GRU_pred = df[['GRU_predict']]
+#df_pretrained_pred = df[['Pretrained_feature_predict']]
 
 prepared_data = pd.concat(
     [
-        df_publication_id,
         df_gene_target_symbol_name,
         df_gene_target_ncbi_id,
         df_gene_target_species,
@@ -101,8 +92,8 @@ prepared_data = pd.concat(
         df_Duration_after_transfection_h,
         siRNA_feat_builder(df.siRNA_sense_seq, False),
         siRNA_feat_builder(df.siRNA_antisense_seq, True),
-        df_GRU_pred,
-        df_pretrained_pred,
+        #df_GRU_pred,
+        #df_pretrained_pred,
         df.iloc[:, -1].to_frame(),
     ],
     axis=1,
@@ -121,5 +112,6 @@ df_submit.to_csv(filename, index=False)
 
 
 # TODO: clean the testing change
+print(f"{base_path}app/submit.csv")
 tmp = pd.read_csv(f"{base_path}app/submit.csv")
-print(tmp.head(3))
+print(tmp.head(10))

@@ -1,0 +1,4 @@
+*.pyc
+
+submission_first_round/submit/**/*
+submission_second_round/app/submit.csv
