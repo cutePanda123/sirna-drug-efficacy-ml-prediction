@@ -3,12 +3,13 @@ import pandas as pd
 import glob
 import os
 import sys
-from utils import siRNA_feat_builder
+from utils import siRNA_feat_builder, get_latest_model_file_name
 
 is_docker_env = False
 base_path = "/" if is_docker_env else "../"
 
-loaded_model = lgb.Booster(model_file=f"{base_path}model/lightgbm_model.txt")
+model_file_path = get_latest_model_file_name(f"{base_path}model/")
+loaded_model = lgb.Booster(model_file=model_file_path)
 
 # Load testing data
 csv_files = glob.glob(f"{base_path}tcdata/*.csv")

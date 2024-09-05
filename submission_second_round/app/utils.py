@@ -1,4 +1,6 @@
 import pandas as pd
+import os
+import re
 
 def siRNA_feat_builder(s: pd.Series, anti: bool = False):
     name = "anti" if anti else "sense"
@@ -51,3 +53,15 @@ def siRNA_feat_builder(s: pd.Series, anti: bool = False):
     df[f"feat_siRNA_{name}_GC_ratio_3"] = (GC_ratio_3 == 0.52)
 
     return df.iloc[:, 1:]
+
+def get_latest_model_file_name(model_dir):
+    model_pattern = r"lightgbm_model_(\d{8}_\d{6})\.txt"
+    files = os.listdir(model_dir)
+    model_files = [(file, re.search(model_pattern, file).group(1)) for file in files if re.search(model_pattern, file)]
+    if model_files:
+        latest_model_file = max(model_files, key=lambda x: x[1])[0]
+        print(f"Latest model file: {latest_model_file}")
+        return f"{model_dir}{latest_model_file}"
+    else:
+        print("No model files found.")
+        return "no_file"
