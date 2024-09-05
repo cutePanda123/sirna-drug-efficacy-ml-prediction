@@ -34,14 +34,14 @@ df = pd.read_csv(f"{base_path}app/features/pretrained_feature_predict.csv", inde
 
 print(df.tail(3))
 
-from feature_category import publication_id_category, gene_target_ncbi_id_category, cell_line_donor_category
+from feature_category import publication_id_category, gene_target_symbol_name_category, gene_target_ncbi_id_category, gene_target_species_category, Transfection_method_category, Duration_after_transfection_h_category, cell_line_donor_category
 
 df_publication_id = pd.get_dummies(df.publication_id.astype(pd.CategoricalDtype(categories=publication_id_category)))
 df_publication_id.columns = [
     f"feat_publication_id_{c}" for c in df_publication_id.columns
 ]
 
-df_gene_target_symbol_name = pd.get_dummies(df.gene_target_symbol_name)
+df_gene_target_symbol_name = pd.get_dummies(df.gene_target_symbol_name.astype(pd.CategoricalDtype(categories=gene_target_symbol_name_category)))
 df_gene_target_symbol_name.columns = [
     f"feat_gene_target_symbol_name_{c}" for c in df_gene_target_symbol_name.columns
 ]
@@ -51,14 +51,15 @@ df_gene_target_ncbi_id.columns = [
     f"feat_gene_target_ncbi_id_{c}" for c in df_gene_target_ncbi_id.columns
 ]
 
-df_gene_target_species = pd.get_dummies(df.gene_target_species)
+df_gene_target_species = pd.get_dummies(df.gene_target_species.astype(pd.CategoricalDtype(categories=gene_target_species_category)))
 df_gene_target_species.columns = [
     f"feat_gene_target_species_{c}" for c in df_gene_target_species.columns
 ]
 
 siRNA_duplex_id_values = df.siRNA_duplex_id.str.split("-|\.").str[1].astype("int")
 siRNA_duplex_id_values = (siRNA_duplex_id_values - siRNA_duplex_id_values.min()) / (
-    siRNA_duplex_id_values.max() - siRNA_duplex_id_values.min()
+    #siRNA_duplex_id_values.max() - siRNA_duplex_id_values.min()
+    1810839 - 62934
 )
 df_siRNA_duplex_id = pd.DataFrame(siRNA_duplex_id_values)
 
@@ -74,11 +75,11 @@ df_cell_line_donor["feat_cell_line_donor_cells"] = (
 )
 
 df_siRNA_concentration = df.siRNA_concentration.to_frame()
-df_Transfection_method = pd.get_dummies(df.Transfection_method)
+df_Transfection_method = pd.get_dummies(df.Transfection_method.astype(pd.CategoricalDtype(categories=Transfection_method_category)))
 df_Transfection_method.columns = [
     f"feat_Transfection_method_{c}" for c in df_Transfection_method.columns
 ]
-df_Duration_after_transfection_h = pd.get_dummies(df.Duration_after_transfection_h)
+df_Duration_after_transfection_h = pd.get_dummies(df.Duration_after_transfection_h.astype(pd.CategoricalDtype(categories=Duration_after_transfection_h_category)))
 df_Duration_after_transfection_h.columns = [
     f"feat_Duration_after_transfection_h_{c}"
     for c in df_Duration_after_transfection_h.columns
