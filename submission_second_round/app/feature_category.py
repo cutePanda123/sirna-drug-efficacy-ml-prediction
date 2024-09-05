@@ -1,14 +1,3 @@
-publication_id_category = ['WO0b0a8fec3d', 'WO0beeb1f407', 'WO181a7d3a16', 'WO182f2c5b3a',
-       'WO1b379c9eef', 'WO2185a478f7', 'WO2527cd3fe5', 'WO28aca1a182',
-       'WO28b5990c45', 'WO2b901a9fb5', 'WO2dadb0c0c7', 'WO340319f8ba',
-       'WO3be1cf34e8', 'WO40428852d0', 'WO5355a219aa', 'WO5688ad54a1',
-       'WO6c4db1f08f', 'WO6db0c26e50', 'WO6fe860fef8', 'WO854c10004b',
-       'WO85e99b3492', 'WO9abafc223f', 'WO9cdd416594', 'WO9efb397e42',
-       'WOa4ea4f50c8', 'WOa519cea1c5', 'WOa611314a90', 'WOad8ff5d89a',
-       'WOaf860700aa', 'WOb027e2c5f0', 'WOc20c87f522', 'WOd9a3dd8c47',
-       'WOda137ca368', 'WOdbb8b7dbd0', 'WOdc4f13c160', 'WOdc6f16a65e',
-       'WOee0afbdeee', 'WOf5583f6d6e', 'WOf5fa77d982', 'WOff4c21cc8c']
-
 gene_target_symbol_name_category = ['ABLIM3', 'ACE2', 'ADRA2A', 'ANGPTL3', 'ANGPTL4', 'ANGPTL7', 'APP',
        'ATXN2', 'Angptl7', 'Atxn2', 'C3', 'C9', 'CFB', 'CIDEB', 'CTNNB1',
        'Cfb', 'F10', 'F12', 'F5', 'FLCN', 'FLNA', 'Flcn', 'Flna', 'GSK3A',
