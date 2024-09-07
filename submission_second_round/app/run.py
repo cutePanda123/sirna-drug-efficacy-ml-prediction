@@ -77,7 +77,8 @@ df_Duration_after_transfection_h.columns = [
     for c in df_Duration_after_transfection_h.columns
 ]
 
-#df_GRU_pred = df[['GRU_predict']]
+from GRU_feature import df_GRU_pred
+
 #df_pretrained_pred = df[['Pretrained_feature_predict']]
 
 prepared_data = pd.concat(
@@ -92,7 +93,7 @@ prepared_data = pd.concat(
         df_Duration_after_transfection_h,
         siRNA_feat_builder(df.siRNA_sense_seq, False),
         siRNA_feat_builder(df.siRNA_antisense_seq, True),
-        #df_GRU_pred,
+        #df_GRU_pred, # uncomment this line to include GRU feature
         #df_pretrained_pred,
         df.iloc[:, -1].to_frame(),
     ],
