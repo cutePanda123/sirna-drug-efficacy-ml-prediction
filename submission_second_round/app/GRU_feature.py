@@ -113,18 +113,11 @@ columns = ['siRNA_antisense_seq', 'modified_siRNA_antisense_seq_list']
 # Create vocabulary
 tokenizer = GenomicTokenizer(ngram=3, stride=1)
 
-all_tokens = []
-for col in columns:
-    for seq in df[col]:
-        if ' ' in seq:  # Modified sequence
-            all_tokens.extend(seq.split())
-        else:
-            all_tokens.extend(tokenizer.tokenize(seq))
+with open('all_tokens.txt') as f:
+    all_tokens = f.read().splitlines()
 vocab = GenomicVocab.create(all_tokens, max_vocab=10000, min_freq=1)
-
 # Find max sequence length (==25 in this case)
-max_len = max(max(len(seq.split()) if ' ' in seq else len(tokenizer.tokenize(seq)) 
-                    for seq in df[col]) for col in columns)
+max_len = 25
 
 all_dataset = SiRNADataset(df, columns, vocab, tokenizer, max_len)
 all_loader = DataLoader(all_dataset, batch_size=df.shape[0], shuffle=False)
