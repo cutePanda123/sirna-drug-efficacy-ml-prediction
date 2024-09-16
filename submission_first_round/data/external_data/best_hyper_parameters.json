@@ -12,6 +12,6 @@
         "min_child_samples": 20
     },
     "best_estimator": {
-        "n_estimators": 8700
+        "n_estimators": 3000
     }
 }
