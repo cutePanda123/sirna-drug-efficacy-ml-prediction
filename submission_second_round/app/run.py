@@ -1,11 +1,10 @@
 import lightgbm as lgb
 import pandas as pd
 import glob
-import os
 import sys
 from utils import siRNA_feat_builder, get_latest_model_file_name
 
-is_docker_env = False
+is_docker_env = True
 base_path = "/" if is_docker_env else "../"
 
 model_file_path = get_latest_model_file_name(f"{base_path}model/")
@@ -20,16 +19,6 @@ if len(csv_files) == 0:
 csv_file = csv_files[0]
 df_submit = pd.read_csv(csv_file)
 df = pd.concat([df_submit], axis=0).reset_index(drop=True)
-
-# TODO: build these features in runtime based on input testing data
-# df = pd.read_csv(f"{base_path}app/features/gru_features_predict_only.csv", index_col=0).tail(df.shape[0]).merge(
-#     df,
-#     on='id'
-# )
-# df = pd.read_csv(f"{base_path}app/features/pretrained_feature_predict.csv", index_col=0).tail(df.shape[0]).merge(
-#     df,
-#     on='id'
-# )
 
 from feature_category import gene_target_symbol_name_category, gene_target_ncbi_id_category, gene_target_species_category, Transfection_method_category, Duration_after_transfection_h_category, cell_line_donor_category
 
@@ -77,10 +66,6 @@ df_Duration_after_transfection_h.columns = [
     for c in df_Duration_after_transfection_h.columns
 ]
 
-from GRU_feature import df_GRU_pred
-
-#df_pretrained_pred = df[['Pretrained_feature_predict']]
-
 prepared_data = pd.concat(
     [
         df_gene_target_symbol_name,
@@ -93,8 +78,6 @@ prepared_data = pd.concat(
         df_Duration_after_transfection_h,
         siRNA_feat_builder(df.siRNA_sense_seq, False),
         siRNA_feat_builder(df.siRNA_antisense_seq, True),
-        #df_GRU_pred, # uncomment this line to include GRU feature
-        #df_pretrained_pred,
         df.iloc[:, -1].to_frame(),
     ],
     axis=1,
@@ -110,9 +93,3 @@ df_submit["mRNA_remaining_pct"] = y_pred
 filename = f"{base_path}app/submit.csv"
 print(f"File saved as {filename}")
 df_submit.to_csv(filename, index=False)
-
-
-# TODO: clean the testing change
-print(f"{base_path}app/submit.csv")
-tmp = pd.read_csv(f"{base_path}app/submit.csv")
-print(tmp.head(10))

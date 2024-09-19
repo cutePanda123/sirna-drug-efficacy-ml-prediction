@@ -1,0 +1,17 @@
+{
+    "best_params": {
+        "boosting_type": "gbdt",
+        "objective": "regression",
+        "metric": "None",
+        "bagging_fraction": 0.8,
+        "bagging_freq": 5,
+        "feature_fraction": 0.9,
+        "learning_rate": 0.02,
+        "max_depth": 9,
+        "num_leaves": 127,
+        "min_child_samples": 20
+    },
+    "best_estimator": {
+        "n_estimators": 8700
+    }
+}

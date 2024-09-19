@@ -9,7 +9,10 @@ RUN apt-get update && apt-get install -y curl
 # Copy codes
 COPY app /app
 
-# Copy data
+# Copy training data
+COPY data /data
+
+# Copy tcdata
 COPY tcdata /tcdata
 
 # Copy model
