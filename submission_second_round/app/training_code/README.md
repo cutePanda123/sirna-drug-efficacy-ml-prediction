@@ -3,7 +3,6 @@
 This repository contains the code, datasets, and resources necessary to train a machine learning model for predicting the efficacy of siRNA-based drugs. The project focuses on developing and optimizing models, covering aspects such as data preparation, feature engineering, hyperparameter tuning, and more.
 
 ## Dependencies
-
 - **Operating System**: macOS 14.6.1
 - **Python**: 3.11.7
 - **Packages**:
@@ -25,7 +24,13 @@ This repository contains the code, datasets, and resources necessary to train a 
 - Build image: docker build -t sirna-ml-prediction-image
 - Run image: docker run sirna-ml-prediction-image:latest
 
+## Scoring
+- The model trained with the current solution achieved a score of 0.6017. Although our best score was 0.6072, we’ve exhausted all ways and haven't been able to reproduce that result. Therefore, we've decided to submit this solution with the second-best score. 
+
 ## Project Structure
+
+- **`/app/training_code/best_hyper_parameters.json`**
+  - **Purpose**: Saves the best hyperparameters identified through the hyperparameter search.
 
 - **`/app/training_code/best_hyper_parameters.json`**
   - **Purpose**: Saves the best hyperparameters identified through the hyperparameter search.
